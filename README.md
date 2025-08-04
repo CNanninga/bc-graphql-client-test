@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BigCommerce Client-Side GraphQL Test
 
-## Getting Started
+This app is a simple test of the behavior of client-side requests to the BigCommerce GraphQL Storefront API from a third-party application, namely the behavior of the cookie used to track customer context.
 
-First, run the development server:
+Three simple buttons:
+* **Log In** performs a `login` mutation
+* **Log Out** performs a `logout` mutation
+* **Get Customer** performs a `customer` query to fetch the email address of the currently logged-in customer
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+GQL responses are simply logged to the console.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The customer credentials are defined in env vars, not user input, because the point of this app is not to test different customer credentials, only client-side request behavior.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Generate a storefront token with appropriate `allowed_cors_origins` including the domain where the app will be running.
 
-## Learn More
+Define the following env vars:
 
-To learn more about Next.js, take a look at the following resources:
+* `BC_GQL_TOKEN`: The storefront token
+* `EMAIL`: Valid customer email
+* `PASSWORD`: Valid customer password
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Test Cross-Origin Requests
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Define the following env vars:
 
-## Deploy on Vercel
+* `BC_STORE_HASH`
+* `BC_CHANNEL_ID`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Make sure `BC_GQL_DOMAIN` is _not_ defined.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+GQL queries will be made to `store-${BC_STORE_HASH}-${BC_CHANNEL_ID}.mybigcommerce.com/graphql`
+
+## Test Same-Origin Requests
+
+Configure two DNS records on the same domain:
+* Subdomain that will resolve to the BigCommerce channel (e.g., the domain set as the Channel Site checkout URL, in a headless storefront scenario)
+* Subdomain where this app will be deployed
+
+Define the following env var:
+
+* `BC_GQL_DOMAIN`: The BC subdomain (e.g., `https://checkout.mystore.com`)
+
+Queries will be made to `${BC_GQL_DOMAIN}/graphql`
