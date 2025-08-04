@@ -17,6 +17,7 @@ export default function BcGraphQl({
         'Accept': 'application/json',
         'Accept-Language': 'en-US',
       },
+      credentials: 'include',
       body: JSON.stringify({ query: gql }),
     })
       .then(res => res.json())
