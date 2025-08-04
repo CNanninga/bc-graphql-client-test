@@ -1,9 +1,11 @@
 import BcGraphQl from "@/components/bc-graphql";
 
-const { BC_STORE_HASH, BC_CHANNEL_ID, BC_GQL_TOKEN, EMAIL, PASSWORD } = process.env;
+const { BC_GQL_DOMAIN, BC_STORE_HASH, BC_CHANNEL_ID, BC_GQL_TOKEN, EMAIL, PASSWORD } = process.env;
 
 const token = BC_GQL_TOKEN;
-const endpoint = `https://store-${BC_STORE_HASH}-${BC_CHANNEL_ID}.mybigcommerce.com/graphql`;
+const endpoint = (BC_GQL_DOMAIN)
+  ?  `${BC_GQL_DOMAIN.endsWith('/') ? BC_GQL_DOMAIN.slice(0, -1) : BC_GQL_DOMAIN}/graphql`
+  : `https://store-${BC_STORE_HASH}-${BC_CHANNEL_ID}.mybigcommerce.com/graphql`;
 
 export default function Home() {
   return (
